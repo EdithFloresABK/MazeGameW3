@@ -11,6 +11,7 @@ constexpr int kStartingNumberOfLives = 3;
 Player::Player()
 	: PlacableActor(0, 0)
 	, m_pCurrentKey(nullptr)
+	, m_pCurrentRock(nullptr)
 	, m_money(0)
 	, m_lives(kStartingNumberOfLives)
 {
@@ -48,6 +49,25 @@ void Player::DropKey()
 		AudioManager::GetInstance()->PlayKeyDropSound();
 		m_pCurrentKey->Place(m_pPosition->x, m_pPosition->y);
 		m_pCurrentKey = nullptr;
+	}
+}
+bool Player::HasRock()
+{
+	return m_pCurrentRock != nullptr;
+}
+
+void Player::PickupRock(Rock* rock)
+{
+	m_pCurrentRock = rock;
+}
+
+void Player::DropRock()
+{
+	if (m_pCurrentRock)
+	{
+		AudioManager::GetInstance()->PlayKeyDropSound();
+		m_pCurrentRock->Place(m_pPosition->x, m_pPosition->y);
+		m_pCurrentRock = nullptr;
 	}
 }
 

@@ -102,6 +102,10 @@ void GameplayState::ProcessInput()
 	{
 		m_player.DropKey();
 	}
+	else if ((char)input == 'R' || (char)input == 'r')
+	{
+		m_player.DropRock();
+	}
 
 	// If position never changed
 	if (newPlayerX == m_player.GetXPosition() && newPlayerY == m_player.GetYPosition())
@@ -171,13 +175,14 @@ void GameplayState::HandleCollision(int newPlayerX, int newPlayerY)
 			AudioManager::GetInstance()->PlayLoseLivesSound();
 			collidedEnemy->Remove();
 			m_player.SetPosition(newPlayerX, newPlayerY);
-
-			m_player.DecrementLives();
-			if (m_player.GetLives() < 0)
-			{
-				//TODO: Go to game over screen
-				AudioManager::GetInstance()->PlayLoseSound();
-				m_pOwner->LoadScene(StateMachineExampleGame::SceneName::Lose);
+			if (!m_player.HasRock()) {
+				m_player.DecrementLives();
+				if (m_player.GetLives() < 0)
+				{
+					//TODO: Go to game over screen
+					AudioManager::GetInstance()->PlayLoseSound();
+					m_pOwner->LoadScene(StateMachineExampleGame::SceneName::Lose);
+				}
 			}
 			break;
 		}
@@ -199,6 +204,20 @@ void GameplayState::HandleCollision(int newPlayerX, int newPlayerY)
 			{
 				m_player.PickupKey(collidedKey);
 				collidedKey->Remove();
+				m_player.SetPosition(newPlayerX, newPlayerY);
+				AudioManager::GetInstance()->PlayKeyPickupSound();
+			}
+			break;
+		}
+		case ActorType::Rock:
+		{
+			Rock* collidedRock = dynamic_cast<Rock*>(collidedActor);
+			assert(collidedRock);
+
+			if (!m_player.HasRock())
+			{
+				m_player.PickupRock(collidedRock);
+				collidedRock->Remove();
 				m_player.SetPosition(newPlayerX, newPlayerY);
 				AudioManager::GetInstance()->PlayKeyPickupSound();
 			}
@@ -298,6 +317,10 @@ void GameplayState::DrawHUD(const HANDLE& console)
 	{
 		m_player.GetKey()->Draw();
 	}
+	else if (m_player.HasRock()) {
+
+		m_player.GetRock()->Draw();
+	}
 	else
 	{
 		cout << " ";
@@ -315,6 +338,26 @@ void GameplayState::DrawHUD(const HANDLE& console)
 	cout << Level::WAL;
 	cout << endl;
 
+	// Bottom Border
+	for (int i = 0; i < m_pLevel->GetWidth(); ++i)
+	{
+		cout << Level::WAL;
+	}
+	cout << endl;
+
+	cout << Level::WAL;
+	cout << " rock:";
+	if (m_player.HasRock()) {
+
+		m_player.GetRock()->Draw();
+		cout << " ";
+	}
+	else
+	{
+		cout << " ";
+	}
+	cout << Level::WAL;
+	cout << endl;
 	// Bottom Border
 	for (int i = 0; i < m_pLevel->GetWidth(); ++i)
 	{

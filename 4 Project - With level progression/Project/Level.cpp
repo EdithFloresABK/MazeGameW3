@@ -167,6 +167,10 @@ bool Level::ConvertLevel(int* playerX, int* playerY)
 					*playerY = y;
 				}
 				break;
+			case '#':
+				m_pLevelData[index] = ' ';
+				m_pActors.push_back(new Rock(x, y));
+				break;
 			case 'e':
 				m_pActors.push_back(new Enemy(x, y));
 				m_pLevelData[index] = ' '; // clear the level

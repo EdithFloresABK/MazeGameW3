@@ -1,5 +1,6 @@
 #pragma once
 #include "PlacableActor.h"
+#include "Rock.h"
 
 class Key;
 
@@ -16,6 +17,11 @@ public:
 	void DropKey();
 	Key* GetKey() { return m_pCurrentKey; }
 
+	bool HasRock();
+	void PickupRock(Rock* rock);
+	void DropRock();
+	Rock* GetRock() { return m_pCurrentRock; }
+
 	void AddMoney(int money) { m_money += money; }
 	int GetMoney() { return m_money; }
 
@@ -28,6 +34,7 @@ public:
 	virtual void Draw() override;
 private:
 	Key* m_pCurrentKey;
+	Rock* m_pCurrentRock;
 	int m_money;
 	int m_lives;
 };
